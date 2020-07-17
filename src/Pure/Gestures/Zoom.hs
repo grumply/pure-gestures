@@ -20,8 +20,8 @@ import GHC.Generics
 type Centroid = Point
 
 data ZoomEvent = ZoomEvent
-  { origin :: Centroid
-  , delta  :: Double
+  { origin    :: Centroid
+  , direction :: Double
   } deriving (Generic,ToJSON,FromJSON)
 
 data ZoomData = ZoomData
@@ -72,7 +72,7 @@ zoomGestureChange f (evtObj -> o) = do
       case (morigin,mgesture) of
         (Just origin,Just g) -> do
           store "pure-gestures-zoom-gesture" i
-          let delta = negate (6 * signum (g - i))
+          let direction = negate (signum (g - i))
           f ZoomEvent {..}
         _ ->
           pure ()
@@ -120,7 +120,7 @@ zoomWheel f (evtObj -> e) = do
   morigin <- retrieve "pure-gestures-zoom-origin"
   case (morigin,e .# "wheelDeltaY") of
     (Just origin,Just d) ->
-      let delta = 6 * signum d
+      let direction = signum d
       in f ZoomEvent {..}
     _ -> pure ()
 
@@ -135,7 +135,7 @@ createZoomEvent pd@(ZoomData origin (t1,o1) (t2,o2)) (n1,n2)
   , d2 <- dist origin p2 - dist origin o2
   , lastA <- (t1,p1)
   , lastB <- (t2,p2)
-  , delta <- 6 * signum ((d1 + d2) / 2)
+  , direction <- signum ((d1 + d2) / 2)
   = Just (ZoomData {..},ZoomEvent {..})
 
   | t1 == touchId n1
