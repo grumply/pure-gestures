@@ -46,13 +46,13 @@ onZoom f = screenSupport . mouseSupport . gestureSupport
       . OnTouchEnd zoomTouchEnd
 
     mouseSupport =
-        OnWith def { passive = False } "wheel" (zoomWheel f)
+        OnWheel (zoomWheel f)
       . OnMouseMove zoomMouseMove
 
     gestureSupport =
-        OnWith def { passive = False } "gesturestart" zoomGestureStart
-      . OnWith def { passive = False } "gesturechange" (zoomGestureChange f)
-      . OnWith def { passive = False } "gestureend" zoomGestureEnd
+        On "gesturestart" zoomGestureStart
+      . On "gesturechange" (zoomGestureChange f)
+      . On "gestureend" zoomGestureEnd
 
 zoomGestureStart :: Evt -> IO ()
 zoomGestureStart (evtObj -> o) = do
