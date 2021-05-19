@@ -50,9 +50,9 @@ onZoom f = screenSupport . mouseSupport . gestureSupport
       . OnMouseMove zoomMouseMove
 
     gestureSupport =
-        On "gesturestart" zoomGestureStart
-      . On "gesturechange" (zoomGestureChange f)
-      . On "gestureend" zoomGestureEnd
+        OnGestureStart zoomGestureStart
+      . OnGestureChange (zoomGestureChange f)
+      . OnGestureEnd zoomGestureEnd
 
 zoomGestureStart :: Evt -> IO ()
 zoomGestureStart (evtObj -> o) = do
